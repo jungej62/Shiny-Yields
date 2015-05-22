@@ -1,6 +1,32 @@
-qmap("minnesota", zoom=6)
+library(gstat); library(sp); library(maptools); library(ggplot2); library(scales);library(ggmap)
+library(GISTools);library(devtools); library(shiny); library(maps); library(reshape2); library(reshape)
+source_gist("https://gist.github.com/jungej62/5a76b72bcd0b12a7ce8a")
+pdat<-read.table(file="App1/PolyDat_cpy.txt", header=T)
+pdat$Location<-as.factor(pdat$Location); pdat$fYear<-as.factor(pdat$Year);pdat$Plot<-as.factor(pdat$Plot);
+pdat$Trt<-as.factor(pdat$Trt); pdat$Nfert<-as.factor(pdat$Nfert)
+pdat$TotalBiomass<-pdat$TotalBiomass*2
+pdat2<-pdat[,c(2:8,12)]
+pdat2$Site2<-pdat2$Site
+pdat2$Site2<-factor(pdat2$Site, labels=c("Becker", "Crookston", "Fargo", "Lamberton", "Mahnoman", "Roseau", "Red Lake Falls", "Saint Paul", "Waseca"))
+dd1<-cast(pdat2, Lat+Lon+Site2~Trt, value="TotalBiomass", mean, na.rm=T)
 
+mdat<-summarySE(subset(pdat, pdat$Trt=="1"),#pdat$Trt==input$variable),
+                measurevar="TotalBiomass", groupvars="Site", na.rm=T)
 
+dd<-cast(pdat2, Site~Trt, mean, na.rm=T)
+dd<-cbind(dd,mdat2[,7:9])
+write.csv(dd, "sumdat.csv")
+mdat2<-cbind(mdat, aggregate(Lat~Site, pdat, unique)[,2], aggregate(Lon~Site, pdat, unique)[,2])
+mdat2$site2<-c("Becker", "Crookston", "Fargo", "Lamberton", "Mahnoman", "Roseau", "Red Lake Falls", "Saint Paul", "Waseca")
+colnames(mdat2)[7:8]<-c("Lat","Lon")
+mmap<-get_googlemap(center=c(lon = -93.920710, lat = 46.52), zoom=6, maptype="hybrid")
+mdat2$Pos1<-mdat2$Lon+c(0.8,-0.2,0.8,0.8,1.2,0.9,1.5,0.8,0.8)# + Right    - left
+mdat2$Pos2<-mdat2$Lat+c(0.1, -0.2, -0.1, 0.3, -0.2, -0.1, 0.1, -0.25, -0.2)#  + Up    - down
+ggmap(mmap)+
+  geom_point(data=mdat2, aes(x=Lon, y=Lat, color=TotalBiomass), size=8.5)+
+  geom_text(data=mdat2, aes(x=Pos1, y=Pos2, label=site2), size=7.5,  fontface="bold")+
+  scale_color_gradient2(low = "red", mid = "white", high = "blue", 
+                      midpoint = mean(pdat$TotalBiomass, na.rm=T), space = "rgb", na.value = "grey50", guide = "colourbar")
 
 
 
