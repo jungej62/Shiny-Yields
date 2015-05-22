@@ -1,5 +1,7 @@
-setwd("~/Documents/Projects/PolycultureBioenergy")
-source.with.encoding('~/Documents/Projects/HelperFunctions.R', encoding='UTF-8')
+#setwd("~/Documents/Projects/PolycultureBioenergy")
+#source.with.encoding('~/Documents/Projects/HelperFunctions.R', encoding='UTF-8')
+library(ggplot2); library(devtools); library(shiny)
+source_gist("https://gist.github.com/jungej62/5a76b72bcd0b12a7ce8a")
 pdat<-read.table(file="PolyDat.txt", header=T)
 pdat$Location<-as.factor(pdat$Location); pdat$fYear<-as.factor(pdat$Year);pdat$Plot<-as.factor(pdat$Plot);
 pdat$Trt<-as.factor(pdat$Trt); pdat$Nfert<-as.factor(pdat$Nfert)
