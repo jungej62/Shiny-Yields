@@ -30,10 +30,30 @@ ggmap(mmap)+
 
 
 
+for(i in 1:3){
+selectedData<-dd1[,c(1:3,as.numeric(i)+3)]
+
+ggmap(get_googlemap(center=c(lon = -93.920710, lat = 46.52), zoom=6, maptype="hybrid"))+
+  geom_point(data=selectedData, aes(x=Lon, y=Lat, color=selectedData[4]), size=8.5)+
+  geom_text(data=selectedData, aes(x=Lon+c(0.8,-0.2,0.8,0.8,1.2,0.9,1.5,0.8,0.8),
+                                   y=Lat+c(0.2, -0.2, -0.1, 0.3, -0.2, -0.2, 0.2, -0.25, -0.25),
+                                   label=Site2), size=7,  fontface="bold")+
+  scale_color_gradient2(low = "red", mid = "white", high = "blue", 
+                        midpoint = mean(subset(pdat, Trt==i)$TotalBiomass, na.rm=T), space = "rgb", na.value = "grey50", guide = "colourbar")
 
 
+}
 
+selectedData<-dd1[,c(1:3,as.numeric("1")+3)]
+colnames(selectedData)[4]<-"Yld"
 
+ggmap(get_googlemap(center=c(lon = -93.920710, lat = 46.52), zoom=6, maptype="hybrid"))+
+  geom_point(data=selectedData, aes(x=Lon, y=Lat, color=Yld), size=8.5)+
+  geom_text(data=selectedData, aes(x=Lon+c(0.8,-0.2,0.8,0.8,1.2,0.9,1.5,0.8,0.8),
+                                   y=Lat+c(0.2, -0.2, -0.1, 0.3, -0.2, -0.2, 0.2, -0.25, -0.25),
+                                   label=Site2), size=7,  fontface="bold")+
+  scale_color_gradient2(low = "red", mid = "white", high = "blue", 
+                        midpoint = mean(subset(pdat, Trt=="1")$TotalBiomass, na.rm=T), space = "rgb", na.value = "grey50", guide = "colourbar")
 
 
 
